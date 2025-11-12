@@ -49,6 +49,7 @@ class LLMConfig(BaseSettings):
         "ollama",
         "claude-code-cli",
         "codex-cli",
+        "anthropic",
     ] = Field(
         default="openai",
         description="Default LLM provider for both roles (utility, synthesis)",
@@ -60,6 +61,7 @@ class LLMConfig(BaseSettings):
         "ollama",
         "claude-code-cli",
         "codex-cli",
+        "anthropic",
     ] | None = Field(default=None, description="Override provider for utility ops")
 
     synthesis_provider: Literal[
@@ -67,6 +69,7 @@ class LLMConfig(BaseSettings):
         "ollama",
         "claude-code-cli",
         "codex-cli",
+        "anthropic",
     ] | None = Field(default=None, description="Override provider for synthesis ops")
 
     # Model Configuration (dual-model architecture)
@@ -213,6 +216,13 @@ class LLMConfig(BaseSettings):
         elif self.provider == "codex-cli":
             # Codex CLI: nominal label; require explicit model if desired
             return ("codex", "codex")
+        elif self.provider == "anthropic":
+            # Anthropic: Haiku 4.5 for utility (fast/cheap), Sonnet 4.5 for synthesis (powerful)
+            # Latest models as of 2025:
+            # - claude-haiku-4-5-20251001: Fastest, real-time use
+            # - claude-sonnet-4-5-20250929: Best intelligence/speed balance
+            # - claude-opus-4-1-20250805: Most capable for complex reasoning
+            return ("claude-haiku-4-5-20251001", "claude-sonnet-4-5-20250929")
         else:
             return ("gpt-5-nano", "gpt-5")
 
@@ -279,19 +289,19 @@ class LLMConfig(BaseSettings):
 
         parser.add_argument(
             "--llm-provider",
-            choices=["openai", "ollama", "claude-code-cli", "codex-cli"],
+            choices=["openai", "ollama", "claude-code-cli", "codex-cli", "anthropic"],
             help="Default LLM provider for both roles",
         )
 
         parser.add_argument(
             "--llm-utility-provider",
-            choices=["openai", "ollama", "claude-code-cli", "codex-cli"],
+            choices=["openai", "ollama", "claude-code-cli", "codex-cli", "anthropic"],
             help="Override LLM provider for utility operations",
         )
 
         parser.add_argument(
             "--llm-synthesis-provider",
-            choices=["openai", "ollama", "claude-code-cli", "codex-cli"],
+            choices=["openai", "ollama", "claude-code-cli", "codex-cli", "anthropic"],
             help="Override LLM provider for synthesis operations",
         )
 

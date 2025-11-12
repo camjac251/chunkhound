@@ -75,6 +75,7 @@ dependencies = [
     "numpy>=1.24.0",
     "pathspec>=0.12.1",
     "pygit2>=1.12.0",
+    "anthropic>=0.72.1",
 ]
 
 [project.optional-dependencies]
@@ -105,6 +106,8 @@ Changelog = "https://github.com/chunkhound/chunkhound/releases"
 
 [tool.hatch.build]
 include = [
+    "chunkhound/**/*.py",
+    "chunkhound/py.typed",
     "tests/fixtures/yaml/**/*",
 ]
 
